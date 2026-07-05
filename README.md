@@ -1,18 +1,44 @@
 # Flask DSA Tracker
 
+> **Work in Progress:** This project is currently under active development. New features and improvements are being added as I continue learning Flask and backend development.
+
 A web application built with Flask to help students practice Data Structures & Algorithms more effectively.
 
-Instead of only tracking solved problems, this application focuses on identifying weak DSA patterns, measuring confidence, and recommending when to review topics using spaced repetition.
+Rather than simply tracking solved problems, the goal is to identify weak DSA patterns, measure solving confidence, and recommend when to revisit topics using spaced repetition.
 
-## Features
+## Current Progress
+
+* Designed the database schema using SQLAlchemy
+* Implemented `User`, `Pattern`, `Problem`, and `Attempt` models
+* Created many-to-many relationships between problems and patterns
+* Configured the Flask application factory
+* Set up Blueprints
+* Configured Flask-Migrate and database migrations
+* Added support for both global and user-created DSA patterns
+
+### In Progress
+
+* Seeding default DSA patterns
+* User authentication
+* Problem management
+* Attempt logging
+
+### Planned
+
+* Analytics dashboard
+* Weakness scoring system
+* Spaced repetition engine
+* Progress visualization
+
+## Planned Features
 
 * User authentication
 * Track solved DSA problems
 * Categorize problems by DSA pattern
-* Record solve time and confidence
-* View progress dashboard
-* Weakness scoring
-* Spaced repetition for revision
+* Record solving time and confidence
+* Progress dashboard
+* Weakness analysis
+* Spaced repetition scheduling
 * Support for custom DSA patterns
 
 ## Tech Stack
@@ -26,40 +52,6 @@ Instead of only tracking solved problems, this application focuses on identifyin
 * CSS
 * Jinja2
 
-## Project Structure
-
-```text
-app/
-├── routes/
-├── templates/
-├── static/
-├── models.py
-├── __init__.py
-
-migrations/
-
-run.py
-requirements.txt
-README.md
-```
-
-## Current Progress
-
-* Database models completed
-* Database migrations configured
-* Flask application factory implemented
-* Blueprint structure created
-
-## Roadmap
-
-* Seed default DSA patterns
-* User authentication
-* Add and manage problems
-* Log solving attempts
-* Dashboard with analytics
-* Weakness scoring
-* Spaced repetition engine
-
 ## Purpose
 
-This project is being built as both a learning project and a portfolio project to deepen understanding of Flask, databases, backend development, and software engineering best practices.
+This project is being developed as both a learning experience and a portfolio project. It is built incrementally to deepen my understanding of Flask, SQLAlchemy, authentication, database design, backend architecture, and software engineering best practices.
