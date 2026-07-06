@@ -15,10 +15,10 @@ Rather than simply tracking solved problems, the goal is to identify weak DSA pa
 * Set up Blueprints
 * Configured Flask-Migrate and database migrations
 * Added support for both global and user-created DSA patterns
+* Seeding default DSA patterns
 
 ### In Progress
 
-* Seeding default DSA patterns
 * User authentication
 * Problem management
 * Attempt logging
