@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 from datetime import datetime
 from sqlalchemy import MetaData
 
@@ -12,10 +13,11 @@ naming_convention = {
 
 db = SQLAlchemy(metadata=MetaData(naming_convention=naming_convention))
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(70), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)   
     phone_no = db.Column(db.String(15), unique=True)
     created_at =db.Column(db.DateTime, default=datetime.utcnow)
