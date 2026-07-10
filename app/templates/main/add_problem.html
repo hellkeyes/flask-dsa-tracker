@@ -1,0 +1,21 @@
+<!DOCTYLE html>
+<html lang="en">
+    <head>
+        <meta charset="'utf-8">
+        <title>Add Problem</title>
+    </head>
+<body>
+    <h1>Add Problem</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.title.label }} {{ form.title(placeholder='enter full name') }}
+        {{ form.submit() }}
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <p style="color:red">{{message}}</p>
+        {% endfor %}
+    {% endwith %}
+</body>
+    
+</html>

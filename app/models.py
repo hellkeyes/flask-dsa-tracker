@@ -22,10 +22,10 @@ class User(db.Model, UserMixin):
     phone_no = db.Column(db.String(15), unique=True)
     created_at =db.Column(db.DateTime, default=datetime.utcnow)
 
-    attempts = db.relationship('Attempt', backref='user', cascade='all, delete-orphan')
+    user_problems = db.relationship('UserProblem', backref='user', cascade='all, delete-orphan')
 
-problem_pattern = db.Table('problem_pattern',                     #association table
-    db.Column('problem_id', db.Integer, db.ForeignKey('problem.problem_id'), primary_key=True),
+userproblem_pattern = db.Table('problem_pattern',                     #association table
+    db.Column('user_problem_id', db.Integer, db.ForeignKey('user_problems.id'), primary_key=True),
     db.Column('pattern_id', db.Integer, db.ForeignKey('pattern.id'), primary_key=True)
 )
 
@@ -36,6 +36,7 @@ class Pattern(db.Model):
     pattern_name = db.Column(db.String(250), unique=True, nullable=False)
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
 
 class Problem(db.Model):
     __tablename__ = 'problem'
@@ -45,17 +46,28 @@ class Problem(db.Model):
     difficulty = db.Column(db.String(10))
     link = db.Column(db.Text)
 
-    patterns = db.relationship('Pattern', secondary=problem_pattern,backref='problems')
-    attempts = db.relationship('Attempt', backref='problem', cascade='all, delete-orphan')
-
 
 class Attempt(db.Model):
     __tablename__ = 'attempt'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-    problem_id = db.Column(db.Integer, db.ForeignKey('problem.problem_id', ondelete='CASCADE'), nullable=False)
+    user_problem_id = db.Column(db.Integer, db.ForeignKey('user_problems.id', ondelete='CASCADE'), nullable=False)
     confidence = db.Column(db.Integer)
     time_taken_mins = db.Column(db.Integer)
     solved = db.Column(db.Boolean)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class UserProblem(db.Model):
+    __tablename__='user_problems'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    problem_id = db.Column(db.Integer, db.ForeignKey('problem.problem_id', ondelete='CASCADE'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    patterns = db.relationship('Pattern', secondary=userproblem_pattern,backref='user_problems')
+    attempts = db.relationship('Attempt', backref='user_problem', cascade='all, delete-orphan')
+
+
+
+

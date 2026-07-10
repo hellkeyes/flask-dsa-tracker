@@ -7,10 +7,13 @@ class RegistrationForm(FlaskForm):
     email = StringField('email', validators=[Email(), DataRequired()])
     password = PasswordField('password', validators=[DataRequired(), Regexp(r"^[A-Za-z0-9_-]+$", message="Username can only contain letters, numbers, and underscores.")])
     confirm_password = PasswordField('confirm_password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('submit')
-
+    submit = SubmitField('Register')
 
 class LoginForm(FlaskForm):
     login = StringField('', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
-    submit = SubmitField('submit')
+    submit = SubmitField('Login')
+
+class AddProblem(FlaskForm):
+    title = StringField('Title name', validators=[DataRequired()])
+    submit = SubmitField('Add Problem')

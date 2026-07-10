@@ -38,7 +38,10 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter(or_(User.username == form.login.data,User.email == form.login.data)).first()
-        if user and encrypt.check_password_hash(user.password, form.password.data):
+        if not user:
+            flash("No account found. Please register first.", "danget")
+            return redirect(url_for('auth.register'))
+        elif user and encrypt.check_password_hash(user.password, form.password.data):
             login_user(user)
             return redirect(url_for('main.dashboard'))
         else:
