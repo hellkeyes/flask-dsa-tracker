@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Select Pattern</title>
+    </head>
+<body>
+    <h1>{{ user_problem.problem.title }}</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.confidence.label }} {{ form.confidence() }}
+        {{ form.time_taken_mins.label }} {{ form.time_taken_mins() }}
+        {{ form.solved.label }} {{ form.solved() }}
+        {{ form.notes.label }} {{ form.notes() }}
+        {{ form.submit() }}
+    </form>
+</body>
+</html>

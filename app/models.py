@@ -64,7 +64,9 @@ class UserProblem(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.problem_id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
+
+    problem = db.relationship('Problem', backref='user_problems') 
     patterns = db.relationship('Pattern', secondary=userproblem_pattern,backref='user_problems')
     attempts = db.relationship('Attempt', backref='user_problem', cascade='all, delete-orphan')
 
