@@ -3,16 +3,90 @@ from app.utils import fetch_problem
 from app.forms import AddProblem, SelectPatternsForm, LogAttemptForm
 from flask_login import login_required, current_user
 from app.models import Problem, UserProblem, db, Pattern, Attempt
-
+from datetime import timedelta, datetime
 
 main = Blueprint('main',__name__)
 
 @main.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('main/dashboard.html')
+    user_problems = UserProblem.query.filter_by(user_id=current_user.id).all()
+    
+    # to calculate the pattern weakness and its score (kpi)
+    pattern_scores = {}
 
-@main.route('/add-problem', methods=['GET','POST'])
+    for up in user_problems:
+        print(up.problem.title)
+        for pattern in up.patterns:
+            if pattern.pattern_name not in pattern_scores:
+                pattern_scores[pattern.pattern_name] = []
+            for attempt in up.attempts:
+                pattern_scores[pattern.pattern_name].append((attempt))
+
+    pattern_attempts = {}
+
+    for pattern_name, attempts in pattern_scores.items():
+        total_attempts = len(attempts)
+        if total_attempts == 0:
+            continue
+        else:
+            all_time_average = sum(attempt.confidence for attempt in attempts)/total_attempts
+
+            last_three_attempts = attempts[-3:]
+            recent_average = (sum(attempt.confidence for attempt in last_three_attempts)/ len(last_three_attempts))
+
+            if recent_average > all_time_average:
+                trend = "Improving"
+            elif recent_average < all_time_average:
+                trend = "Declining"
+            else:
+                trend = "Stable"
+
+            last_practiced = max(attempt.created_at for attempt in attempts)
+
+            pattern_attempts[pattern_name] = {
+            'total_attempts': total_attempts,
+            'average_confidence': round(all_time_average, 1),
+            'trend': trend,
+            'last_practiced': last_practiced
+            }
+
+    review_today = []
+    #this is for the spaced repetition 
+    for up in user_problems:
+        if not up.attempts:
+            continue
+        else:
+            problem_title = up.problem.title
+            last_attempt = max(up.attempts, key=lambda attempt: attempt.created_at)
+            confidence = last_attempt.confidence
+            last_practiced = last_attempt.created_at
+
+            if confidence == 1:
+                review_days = 1
+            elif confidence == 2:
+                review_days = 3
+            elif confidence == 3:
+                review_days =  7
+            elif confidence == 4:
+                review_days = 14
+            else:
+                review_days = 30
+            next_review = last_practiced + timedelta(days=review_days)
+
+            today = datetime.today()
+            if next_review <= today:
+                review_today.append({
+                    "title": up.problem.title,
+                    "last_practiced": last_practiced,
+                    "next_review": next_review
+                })
+
+
+    return render_template('main/dashboard.html',user_problems=user_problems, pattern_attempts=pattern_attempts, review_today=review_today)
+
+
+@main.route('/add_problem', methods=['GET','POST'])
 @login_required
 def add_problem():
     form = AddProblem()
@@ -83,4 +157,15 @@ def log_attempt(user_problem_id):
         db.session.add(attempt)
         db.session.commit()
         return redirect(url_for('main.dashboard'))
-    return render_template('main/log-attempt.html', form=form,user_problem=user_problem)
+    return render_template('main/log_attempt.html', form=form,user_problem=user_problem)
+
+
+@main.route('/test')
+def test():
+
+
+
+
+
+
+    return "Done"

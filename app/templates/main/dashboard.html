@@ -3,7 +3,42 @@
 <head><title>Dashboard</title></head>
 <body>
     <h1>Dashboard</h1>
-        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for user_problem in user_problems %}
+        <h3>{{user_problem.problem.title }}</h3>
+            <ul>
+                <li>Difficulty: {{user_problem.problem.difficulty }}</li>
+                {% for pattern in user_problem.patterns %}
+                    <span>{{ pattern.pattern_name }}</span>
+                {% endfor %}
+                <br>
+                <button type="submit"><a href="{{ url_for('main.log_attempt', user_problem_id=user_problem.id) }}">Attempt Again</a></button>
+            </ul>
+    {% endfor %}
+
+    {% for pattern_name, pattern_stat in pattern_attempts.items() %}
+        <h3>{{pattern_name}}</h3>
+            <p>Total Attempts: {{pattern_stat.total_attempts}}</p>
+            <p>Average Confidence: {{pattern_stat.average_confidence}}</p>
+            <p>Trend: 
+                {% if pattern_stat.trend == 'Improving' %}⬆ {{ pattern_stat.trend }}
+                {% elif pattern_stat.trend == 'Declining' %}⬇ {{ pattern_stat.trend }}
+                {% else %}→ {{ pattern_stat.trend }}
+                {% endif %}
+            </p>
+            <p>Last Practiced: {{pattern_stat.last_practiced.strftime('%B %d, %Y')}}</p>
+    {% endfor %}
+
+    <h2>Review Today</h2>
+    {% if review_today %}
+        {% for problem in review_today %}
+            <h4>{{ problem.title }}</h4>
+            <p>Last Practiced: {{ problem.last_practiced.strftime('%B %d, %Y') }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No reviews due today!</p>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
         <p style="color:red">{{message}}</p>
         {% endfor %}
