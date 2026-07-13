@@ -1,18 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head><title>Login</title></head>
-<body>
-    <h1>Login</h1>
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1 class="page-title"><span class="accent">//</span>Login</h1>
+</div>
+    <div class="form-group">
     <form method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.login.label }} {{ form.login(placeholder='email or username') }}
-        {{ form.password.label }} {{ form.password() }}
-        {{ form.submit() }}
+        {{ form.hidden_tag() }} 
+        {{ form.login.label }} {{ form.login(placeholder='Enter email or username') }}
+        {{ form.password.label }} {{ form.password(placeholder='Enter password') }}
+    </div>
+
+    <div class="form-group">
+        {{ form.submit(class="btn btn-ghost btn-sm") }}
+    </div>
     </form>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}
-        <p>{{ message }}</p>
-    {% endfor %}
-    {% endwith %}
-</body>
-</html>
+    </div>
+
+{% endblock %}

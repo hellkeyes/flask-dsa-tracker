@@ -63,7 +63,7 @@ def dashboard():
             last_practiced = last_attempt.created_at
 
             if confidence == 1:
-                review_days = 1
+                review_days = 0
             elif confidence == 2:
                 review_days = 3
             elif confidence == 3:

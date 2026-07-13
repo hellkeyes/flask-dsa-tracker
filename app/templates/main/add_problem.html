@@ -1,21 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Add Problem</title>
-    </head>
-<body>
-    <h1>Add Problem</h1>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.title.label }} {{ form.title(placeholder='enter full name') }}
-        {{ form.submit() }}
-    </form>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-        <p style="color:red">{{message}}</p>
-        {% endfor %}
-    {% endwith %}
-</body>
+{% extends 'base.html' %}
+{% block title %}Add Problem{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1 class="page-title"><span class="accent">//</span>Add Problem</h1>
+</div>
+
+<div class="form-group">
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.title.label }} {{ form.title(placeholder='enter full name') }}
+    </div>
     
-</html>
+    <div class="form-group">
+    {{ form.submit() }}
+    </div>
+</form>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <p style="color:red">{{message}}</p>
+    {% endfor %}
+{% endwith %}
+
+{% endblock %}
