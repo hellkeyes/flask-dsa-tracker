@@ -4,8 +4,15 @@ from app.forms import AddProblem, SelectPatternsForm, LogAttemptForm
 from flask_login import login_required, current_user
 from app.models import Problem, UserProblem, db, Pattern, Attempt
 from datetime import timedelta, datetime
+from flask_wtf.csrf import generate_csrf
 
 main = Blueprint('main',__name__)
+
+@main.route("/")
+def home():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.dashboard"))
+    return redirect(url_for("auth.login"))
 
 @main.route('/dashboard')
 @login_required
@@ -63,7 +70,7 @@ def dashboard():
             last_practiced = last_attempt.created_at
 
             if confidence == 1:
-                review_days = 0
+                review_days = 1
             elif confidence == 2:
                 review_days = 3
             elif confidence == 3:
@@ -160,12 +167,26 @@ def log_attempt(user_problem_id):
     return render_template('main/log_attempt.html', form=form,user_problem=user_problem)
 
 
-@main.route('/test')
-def test():
+@main.route('/problem/<int:user_problem_id>')
+@login_required
+def problem_detail(user_problem_id):
+    user_problem = UserProblem.query.get_or_404(user_problem_id)
+    if user_problem.user_id != current_user.id:
+        flash("Access denied!","dabger")
+        return redirect(url_for('main.dashboard'))
+    return render_template('main/problem_detail.html', user_problem=user_problem, csrf_token=generate_csrf())
 
 
+@main.route('/problem/<int:user_problem_id>/delete', methods=['POST'])
+@login_required
+def delete_problem(user_problem_id):
+    user_problem = UserProblem.query.get_or_404(user_problem_id)
+    if user_problem.user_id != current_user.id:
+        flash("Access denied!","dabger")
+        return redirect(url_for('main.dashboard'))
+    db.session.delete(user_problem)
+    db.session.commit()
+    flash("Problem removed.", "success")
+    return redirect(url_for('main.dashboard')) 
 
 
-
-
-    return "Done"

@@ -30,7 +30,7 @@
     </div>
 
     <a class="btn btn-ghost btn-sm" href="{{ url_for('main.log_attempt', user_problem_id=user_problem.id) }}">Attempt Again</a>
-
+    <a class="btn" style="font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem;" href="{{ url_for('main.problem_detail', user_problem_id=user_problem.id) }}">Details</a>
     </div>
     {% endfor %}
 
@@ -83,12 +83,6 @@
         <p>No reviews due today!</p>
     {% endif %}
     </div>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-        <p style="color:red">{{message}}</p>
-        {% endfor %}
-    {% endwith %}
 
 
 {% endblock %}
