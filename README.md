@@ -16,18 +16,18 @@ Rather than simply tracking solved problems, the goal is to identify weak DSA pa
 * Configured Flask-Migrate and database migrations
 * Added support for both global and user-created DSA patterns
 * Seeding default DSA patterns
+* User authentication
+* Attempt logging
+* Weakness scoring system
+* Spaced repetition engine
 
 ### In Progress
 
-* User authentication
 * Problem management
-* Attempt logging
+* Analytics dashboard
 
 ### Planned
 
-* Analytics dashboard
-* Weakness scoring system
-* Spaced repetition engine
 * Progress visualization
 
 ## Planned Features

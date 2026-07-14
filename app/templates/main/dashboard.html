@@ -34,43 +34,41 @@
     </div>
     {% endfor %}
 
+    <a href="{{ url_for('main.all_problems') }}" class="btn btn-ghost btn-sm" style="margin: 0rem 0rem 0.8rem 0rem;">View All Problems</a>
+
     </div>
 
     <!-- pattern analysis -->
-    <div>
+     <div>
     <p class="page-header" style="font-family: var(--mono); font-size: 1.25rem">Pattern Insights: </p>
     {% for pattern_name, pattern_stat in pattern_attempts.items() %}
-    <div class="card">
-        <div class="card-title">{{pattern_name}}</div>
-            <div style="margin: 0.75rem 0; display: flex; gap: 1rem; flex-wrap: wrap;">
-                
+        <div class="card">
+        <div class="card-title">{{ pattern_name }}</div>
+        <div style="display: flex; gap: 2rem; margin: 0.75rem 0;">
             <div>
-            <div class="stat-value">{{pattern_stat.total_attempts}}</div>
-            <div class="stat-label">Total Attempts</div>
+                <div class="stat-value">{{ pattern_stat.total_attempts }}</div>
+                <div class="stat-label">Total Attempts</div>
             </div>
-
             <div>
-            <div class="stat-value">{{ pattern_stat.average_confidence }}</div>
-            <div class="stat-label">Avg Confidence</div>
+                <div class="stat-value">{{ pattern_stat.average_confidence }}<span style="font-size: 0.9rem; color: var(--muted)">/5</span></div>
+                <div class="stat-label">Avg Confidence</div>
             </div>
-
-            <p style="font-family: var(--mono); font-size: 1rem;">
-                {% if pattern_stat.trend == 'Improving' %}
-                <span class="trend-up">⬆ Improving</span>
-                {% elif pattern_stat.trend == 'Declining' %}
-                <span class="trend-down">⬇ Declining</span>
-                {% else %}
-                <span class="trend-flat">→ Stable</span>
-                {% endif %}
-            </p>
-
-            <p style="font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem;">Last Practiced: {{pattern_stat.last_practiced.strftime('%B %d, %Y')}}</p>
-            </div>
+        </div>
+        <p style="font-family: var(--mono); font-size: 0.8rem; margin-bottom: 0.5rem;">
+            {% if pattern_stat.trend == 'Improving' %}<span class="trend-up">⬆ Improving</span>
+            {% elif pattern_stat.trend == 'Declining' %}<span class="trend-down">⬇ Declining</span>
+            {% else %}<span class="trend-flat">→ Stable</span>{% endif %}
+        </p>
+        <p style="font-size: 0.75rem; color: var(--muted);">Last practiced {{ pattern_stat.last_practiced.strftime('%B %d, %Y') }}</p>
     </div>
     {% endfor %}
+
+    <a href="{{ url_for('main.all_patterns') }}" class="btn btn-ghost btn-sm" style="margin: 0rem 0rem 0.8rem 0rem;">View All Patterns</a>
     </div>
 
     </div>
+
+
 
     <div class="card review-card">
     <p style="font-family: var(--mono); font-size: 1.5rem; margin: 0.5rem;  margin-bottom: 1rem; font-weight: 600;">Review Today</p>

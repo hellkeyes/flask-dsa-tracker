@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, url_for, redirect, flash
+from flask import Blueprint, render_template, url_for, redirect, flash, request
 from app.utils import fetch_problem
 from app.forms import AddProblem, SelectPatternsForm, LogAttemptForm
 from flask_login import login_required, current_user
 from app.models import Problem, UserProblem, db, Pattern, Attempt
 from datetime import timedelta, datetime
 from flask_wtf.csrf import generate_csrf
+import requests
 
 main = Blueprint('main',__name__)
 
@@ -17,46 +18,10 @@ def home():
 @main.route('/dashboard')
 @login_required
 def dashboard():
-    user_problems = UserProblem.query.filter_by(user_id=current_user.id).all()
-    
-    # to calculate the pattern weakness and its score (kpi)
-    pattern_scores = {}
+    user_problems = UserProblem.query.filter_by(user_id=current_user.id).order_by(UserProblem.created_at.desc()).limit(3).all()
 
-    for up in user_problems:
-        print(up.problem.title)
-        for pattern in up.patterns:
-            if pattern.pattern_name not in pattern_scores:
-                pattern_scores[pattern.pattern_name] = []
-            for attempt in up.attempts:
-                pattern_scores[pattern.pattern_name].append((attempt))
-
-    pattern_attempts = {}
-
-    for pattern_name, attempts in pattern_scores.items():
-        total_attempts = len(attempts)
-        if total_attempts == 0:
-            continue
-        else:
-            all_time_average = sum(attempt.confidence for attempt in attempts)/total_attempts
-
-            last_three_attempts = attempts[-3:]
-            recent_average = (sum(attempt.confidence for attempt in last_three_attempts)/ len(last_three_attempts))
-
-            if recent_average > all_time_average:
-                trend = "Improving"
-            elif recent_average < all_time_average:
-                trend = "Declining"
-            else:
-                trend = "Stable"
-
-            last_practiced = max(attempt.created_at for attempt in attempts)
-
-            pattern_attempts[pattern_name] = {
-            'total_attempts': total_attempts,
-            'average_confidence': round(all_time_average, 1),
-            'trend': trend,
-            'last_practiced': last_practiced
-            }
+    all_pattern_stats = get_pattern_stats(current_user.id)
+    pattern_attempts = dict(sorted(all_pattern_stats.items(), key=lambda x: x[1]['average_confidence'])[:3])
 
     review_today = []
     #this is for the spaced repetition 
@@ -172,7 +137,7 @@ def log_attempt(user_problem_id):
 def problem_detail(user_problem_id):
     user_problem = UserProblem.query.get_or_404(user_problem_id)
     if user_problem.user_id != current_user.id:
-        flash("Access denied!","dabger")
+        flash("Access denied!","danger")
         return redirect(url_for('main.dashboard'))
     return render_template('main/problem_detail.html', user_problem=user_problem, csrf_token=generate_csrf())
 
@@ -189,4 +154,85 @@ def delete_problem(user_problem_id):
     flash("Problem removed.", "success")
     return redirect(url_for('main.dashboard')) 
 
+@main.route('/problems')
+@login_required
+def all_problems():
+    page = request.args.get('page', 1, type=int)
+    user_problems = UserProblem.query.filter_by(
+        user_id=current_user.id
+    ).order_by(UserProblem.created_at.desc()).paginate(page=page, per_page=5)
 
+    return render_template('main/all_problems.html', user_problems=user_problems)
+
+@main.route('/patterns')
+@login_required
+def all_patterns():
+    page = request.args.get('page', 1, type=int)
+    per_page = 5
+
+    all_stats = get_pattern_stats(current_user.id)
+    sorted_patterns = sorted(all_stats.items(), key=lambda x: x[1]['average_confidence'])
+
+    total = len(sorted_patterns)
+    start = (page - 1) * per_page
+    end = start + per_page
+    
+    paginated = dict(sorted_patterns[start:end])
+    total_pages = (total + per_page - 1) // per_page
+    
+    return render_template('main/all_patterns.html',
+        pattern_attempts=paginated,
+        page=page,
+        total_pages=total_pages,
+        has_prev=page > 1,
+        has_next=page < total_pages,
+        prev_num=page - 1,
+        next_num=page + 1
+    )
+
+
+
+# helper function
+def get_pattern_stats(user_id):
+    user_problems = UserProblem.query.filter_by(user_id=user_id).all()
+    
+    # to calculate the pattern weakness and its score (kpi)
+    pattern_scores = {}
+
+    for up in user_problems:
+        print(up.problem.title)
+        for pattern in up.patterns:
+            if pattern.pattern_name not in pattern_scores:
+                pattern_scores[pattern.pattern_name] = []
+            for attempt in up.attempts:
+                pattern_scores[pattern.pattern_name].append((attempt))
+
+    pattern_attempts = {}
+
+    for pattern_name, attempts in pattern_scores.items():
+        total_attempts = len(attempts)
+        if total_attempts == 0:
+            continue
+        else:
+            all_time_average = sum(attempt.confidence for attempt in attempts)/total_attempts
+
+            last_three_attempts = attempts[-3:]
+            recent_average = (sum(attempt.confidence for attempt in last_three_attempts)/ len(last_three_attempts))
+
+            if recent_average > all_time_average:
+                trend = "Improving"
+            elif recent_average < all_time_average:
+                trend = "Declining"
+            else:
+                trend = "Stable"
+
+            last_practiced = max(attempt.created_at for attempt in attempts)
+
+            pattern_attempts[pattern_name] = {
+            'total_attempts': total_attempts,
+            'average_confidence': round(all_time_average, 1),
+            'trend': trend,
+            'last_practiced': last_practiced
+            }
+
+    return pattern_attempts

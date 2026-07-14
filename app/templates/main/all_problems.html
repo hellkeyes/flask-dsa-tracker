@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1 class="page-title"><span class="accent">//</span>All Problems Solved: </h1>
+</div>
+
+    <!-- problems done by user -->
+    <div>
+
+    <p class="page-header" style="font-family: var(--mono); font-size: 1.25rem">Problems Solved: </p>
+
+    {% for user_problem in user_problems %}
+    <div class="card">
+        <div class="card-title">{{user_problem.problem.title }}</div>
+        <div class="card-meta">
+        <span class="badge badge-{{ user_problem.problem.difficulty | lower }}">
+        Difficulty: {{ user_problem.problem.difficulty }}
+        </span>
+    </div>
+
+    <div style="margin: 0.5rem 0;">
+      <span class="tag">Patterns: 
+      {% for pattern in user_problem.patterns %}
+        {{ pattern.pattern_name }}
+      {% endfor %}
+      </span>
+    </div>
+
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('main.log_attempt', user_problem_id=user_problem.id) }}">Attempt Again</a>
+    <a class="btn" style="font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem;" href="{{ url_for('main.problem_detail', user_problem_id=user_problem.id) }}">Details</a>
+    </div>
+    {% endfor %}
+
+    </div>
+
+<div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+    {% if user_problems.has_prev %}
+        <a href="{{ url_for('main.all_problems', page=user_problems.prev_num) }}" class="btn btn-ghost btn-sm">Prev</a>
+    {% endif %}
+    <span style="color: var(--muted); font-size: 0.8rem; padding: 0.35rem 0;">
+        Page {{ user_problems.page }} of {{ user_problems.pages }}
+    </span>
+    {% if user_problems.has_next %}
+        <a href="{{ url_for('main.all_problems', page=user_problems.next_num) }}" class="btn btn-ghost btn-sm">Next</a>
+    {% endif %}
+</div>
+
+{% endblock %}
