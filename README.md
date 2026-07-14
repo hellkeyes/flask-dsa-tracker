@@ -283,12 +283,6 @@ python run.py
 
 ---
 
-# Screenshots
-
-> Screenshots will be added soon.
-
----
-
 # About This Project
 
 This is **Version 1** of the Flask DSA Tracker.
