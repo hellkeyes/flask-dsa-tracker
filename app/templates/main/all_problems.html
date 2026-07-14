@@ -7,33 +7,35 @@
 </div>
 
     <!-- problems done by user -->
-    <div>
+<div>
 
     <p class="page-header" style="font-family: var(--mono); font-size: 1.25rem">Problems Solved: </p>
 
     {% for user_problem in user_problems %}
+    <div class="pattern-scroll">
     <div class="card">
-        <div class="card-title">{{user_problem.problem.title }}</div>
-        <div class="card-meta">
-        <span class="badge badge-{{ user_problem.problem.difficulty | lower }}">
-        Difficulty: {{ user_problem.problem.difficulty }}
+            <div class="card-title">{{user_problem.problem.title }}</div>
+            <div class="card-meta">
+            <span class="badge badge-{{ user_problem.problem.difficulty | lower }}">
+            Difficulty: {{ user_problem.problem.difficulty }}
+            </span></div>
+
+        <div style="margin: 0.5rem 0;">
+        <span class="tag">Patterns: 
+        {% for pattern in user_problem.patterns %}
+            {{ pattern.pattern_name }}
+        {% endfor %}
         </span>
+        </div>
+
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('main.log_attempt', user_problem_id=user_problem.id) }}">Attempt Again</a>
+        <a class="btn" style="font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem;" href="{{ url_for('main.problem_detail', user_problem_id=user_problem.id) }}">Details</a>
     </div>
 
-    <div style="margin: 0.5rem 0;">
-      <span class="tag">Patterns: 
-      {% for pattern in user_problem.patterns %}
-        {{ pattern.pattern_name }}
-      {% endfor %}
-      </span>
-    </div>
-
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('main.log_attempt', user_problem_id=user_problem.id) }}">Attempt Again</a>
-    <a class="btn" style="font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem;" href="{{ url_for('main.problem_detail', user_problem_id=user_problem.id) }}">Details</a>
     </div>
     {% endfor %}
 
-    </div>
+</div>
 
 <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
     {% if user_problems.has_prev %}

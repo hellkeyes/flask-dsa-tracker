@@ -12,6 +12,8 @@
 
     <p class="page-header" style="font-family: var(--mono); font-size: 1.25rem">Problems Solved: </p>
 
+    <div class="pattern-scroll">
+
     {% for user_problem in user_problems %}
     <div class="card">
         <div class="card-title">{{user_problem.problem.title }}</div>
@@ -33,6 +35,7 @@
     <a class="btn" style="font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem;" href="{{ url_for('main.problem_detail', user_problem_id=user_problem.id) }}">Details</a>
     </div>
     {% endfor %}
+    </div>
 
     <a href="{{ url_for('main.all_problems') }}" class="btn btn-ghost btn-sm" style="margin: 0rem 0rem 0.8rem 0rem;">View All Problems</a>
 
@@ -41,6 +44,9 @@
     <!-- pattern analysis -->
      <div>
     <p class="page-header" style="font-family: var(--mono); font-size: 1.25rem">Pattern Insights: </p>
+
+    <div class="pattern-scroll">
+
     {% for pattern_name, pattern_stat in pattern_attempts.items() %}
         <div class="card">
         <div class="card-title">{{ pattern_name }}</div>
@@ -62,6 +68,8 @@
         <p style="font-size: 0.75rem; color: var(--muted);">Last practiced {{ pattern_stat.last_practiced.strftime('%B %d, %Y') }}</p>
     </div>
     {% endfor %}
+
+    </div>
 
     <a href="{{ url_for('main.all_patterns') }}" class="btn btn-ghost btn-sm" style="margin: 0rem 0rem 0.8rem 0rem;">View All Patterns</a>
     </div>
